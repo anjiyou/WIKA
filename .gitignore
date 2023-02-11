@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 create_performance_case/excel/case/
+create_performance_case/excel/performance/
