@@ -7,7 +7,6 @@ import datetime
 import os
 import re
 import shutil
-
 from openpyxl import load_workbook
 
 
@@ -26,6 +25,13 @@ class CreateCase(object):
             sheet = excel[sheet_name]
         excel.close()
         return sheet
+
+    @staticmethod
+    def copy_excel(source_file, destination_file):
+        current_path = os.getcwd()
+        source_file_path = current_path + "/excel/case/" + source_file
+        destination_file_path = current_path + "/excel/case/" + destination_file
+        shutil.copy(source_file_path, destination_file_path)
 
     def get_result_from_excel(self):
         result_dict = {}
@@ -64,14 +70,6 @@ class CreateCase(object):
                 result_dict.update(dict(zip(arm_rate_scope_list, attr_value_list)))
         return result_dict
 
-    @staticmethod
-    def copy_excel(source_file,destination_file):
-        current_path = os.getcwd()
-        source_file_path = current_path+"/excel/case/"+source_file
-        destination_file_path = current_path+"/excel/case/"+destination_file
-        shutil.copy(source_file_path,destination_file_path)
-
-
     def modify_excel(self, file_name, data):
         path = os.getcwd() + "/excel/" + file_name
         excel = load_workbook(filename=path)
@@ -94,7 +92,7 @@ class CreateCase(object):
 if __name__ == '__main__':
     now_str = datetime.datetime.now().strftime("%Y-%d-%m~%H-%M-%S")
     destination_file = f"{now_str}.xlsx"
-    CreateCase.copy_excel(source_file="case_template.xlsx",destination_file=destination_file)
-    create_case = CreateCase("performance/performance.xlsx",target_file=destination_file)
+    CreateCase.copy_excel(source_file="case_template.xlsx", destination_file=destination_file)
+    create_case = CreateCase("performance/performance.xlsx", target_file=destination_file)
     data = create_case.get_result_from_excel()
-    create_case.modify_excel(f"case/{destination_file}",data)
+    create_case.modify_excel(f"case/{destination_file}", data)
