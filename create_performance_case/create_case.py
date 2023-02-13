@@ -11,9 +11,11 @@ from openpyxl import load_workbook
 
 
 class CreateCase(object):
-    def __init__(self, source_file, target_file=None):
-        self.source_file = source_file
+    def __init__(self, performance_file, target_file,ad_range_dict,can_id):
+        self.performance_file = performance_file
         self.target_file = target_file
+        self.ad_range_dict = ad_range_dict
+        self.can_id = can_id
 
     @staticmethod
     def open_excel(file_name, sheet_name=None):
@@ -35,7 +37,7 @@ class CreateCase(object):
 
     def get_result_from_excel(self):
         result_dict = {}
-        sheet = CreateCase.open_excel(self.source_file)
+        sheet = CreateCase.open_excel(self.performance_file)
         rows_list = []
         for row in sheet.rows:
             row = list(map(lambda x: x.value, row))
@@ -68,6 +70,7 @@ class CreateCase(object):
                 arm_rate_scope_list = list(map(lambda x: x + "_" + str(scope), arm_rate_list))
                 attr_value_list = getattr(CreateCase, attr)
                 result_dict.update(dict(zip(arm_rate_scope_list, attr_value_list)))
+        result_dict = dict(sorted(result_dict.items(),key=lambda x:x[0],reverse=True))
         return result_dict
 
     def modify_excel(self, file_name, data):
@@ -88,11 +91,27 @@ class CreateCase(object):
         excel.save(path)
         excel.close()
 
+    def generator_case_info(self,performance_data,):
+        case_info = ""
+        return case_info
+
 
 if __name__ == '__main__':
     now_str = datetime.datetime.now().strftime("%Y-%d-%m~%H-%M-%S")
     destination_file = f"{now_str}.xlsx"
-    CreateCase.copy_excel(source_file="case_template.xlsx", destination_file=destination_file)
-    create_case = CreateCase("performance/performance.xlsx", target_file=destination_file)
-    data = create_case.get_result_from_excel()
-    create_case.modify_excel(f"case/{destination_file}", data)
+    # 复制一份模板
+    CreateCase.copy_excel(source_file="case_template_v1.0.xlsx", destination_file=destination_file)
+    # 实例化CreateCase
+    create_case = CreateCase(
+        performance_file="performance/performance.xlsx",
+        target_file=destination_file,
+        ad_range_dict={800: 80, 150: 15},
+        can_id="0x1FE_byte0~1")
+    # 获取性能表里的数据
+    performance_data = create_case.get_result_from_excel()
+    # create_case.modify_excel(f"case/{destination_file}", performance_data)
+    # 整理将要写入excel的case数据
+    case_info = create_case.generator_case_info(performance_data)
+
+
+
