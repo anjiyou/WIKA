@@ -19,8 +19,8 @@ class CreateCase(object):
     def open_excel(file_name, sheet_name=None):
         path = os.getcwd() + "/excel/" + file_name
         excel = load_workbook(filename=path)
-        if "性能" in excel.sheetnames:
-            sheet = excel["性能"]
+        if "工况性能" in excel.sheetnames:
+            sheet = excel["工况性能"]
         else:
             sheet = excel[sheet_name]
         excel.close()
